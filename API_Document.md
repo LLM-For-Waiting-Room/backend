@@ -21,6 +21,12 @@
     "expire_time": "会话过期时间"
     }
     ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/confirmForm/ \
+    -H "Content-Type: application/json" \
+    -d '{"language": "en", "age": "23"}'
+    ```
 + 进行对话
   - URL: `/patient/chat/`
   - Method: `POST`
@@ -40,6 +46,12 @@
     "expire_time": "会话过期时间"
     }
     ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/chat/ \
+    -H "Content-Type: application/json" \
+    -d '{"session": "SESSION_ID", "content": "Hello"}'
+    ```    
 + 获取会话历史
   - URL: `/patient/getConHistory/`
   - Method: `POST`
@@ -60,6 +72,12 @@
     "is_finished": "是否已结束(boolean)"
     }
     ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/getConHistory/ \
+    -H "Content-Type: application/json" \
+    -d '{"session": "SESSION_ID"}'
+    ```
 + 结束会话并生成患者代码
   - URL: `/patient/endChat/`
   - Method: `POST`
@@ -77,6 +95,12 @@
     "record_id": "唯一记录ID"
     }
     ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/endChat/ \
+    -H "Content-Type: application/json" \
+    -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'
+    ```
 + 通过记录ID查询患者代码 (***还未使用***)
   - URL: `/patient/searchPcode/`
   - Method: `POST`
@@ -93,6 +117,12 @@
     "patient_code": "四位患者代码"
     }
     ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/searchPcode/ \
+    -H "Content-Type: application/json" \
+    -d '{"record_id": "RECORD_UUID"}'
+    ```
 
 ## DoctorUI
 + 通过患者代码获取病历
@@ -106,6 +136,10 @@
     "paragraph": "摘要文本",
     "list": ["关键条目1", "关键条目2"]
     }
+    ```
+  - CURL:
+    ```bash
+    curl -X GET https://4414-143-89-191-4.ngrok-free.app/doctor/summary/0123/
     ```
 + 提交病历修改（含音频转录）
   - URL: `/doctor/summary/\<str:id>\/`
@@ -124,4 +158,11 @@
     "sentences": "音频转录文本",
     "medical_record": "对医患对话的总结"
     }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://4414-143-89-191-4.ngrok-free.app/doctor/summary/0123/ \
+    -F "audio=@/path/to/audio.wav" \
+    -F "modified_paragraph=Updated summary text" \
+    -F "modified_list=[\"Item1\", \"Item2\"]"
     ```
