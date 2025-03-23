@@ -23,7 +23,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/confirmForm/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/confirmForm/ \
     -H "Content-Type: application/json" \
     -d '{"language": "en", "age": "23"}'
     ```
@@ -48,7 +48,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/chat/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/chat/ \
     -H "Content-Type: application/json" \
     -d '{"session": "SESSION_ID", "content": "Hello"}'
     ```    
@@ -74,7 +74,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/getConHistory/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/getConHistory/ \
     -H "Content-Type: application/json" \
     -d '{"session": "SESSION_ID"}'
     ```
@@ -97,7 +97,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/endChat/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/endChat/ \
     -H "Content-Type: application/json" \
     -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'
     ```
@@ -119,7 +119,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/patient/searchPcode/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/searchPcode/ \
     -H "Content-Type: application/json" \
     -d '{"record_id": "RECORD_UUID"}'
     ```
@@ -139,7 +139,7 @@
     ```
   - CURL:
     ```bash
-    curl -X GET https://4414-143-89-191-4.ngrok-free.app/doctor/summary/0123/
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/
     ```
 + 提交病历修改（含音频转录）
   - URL: `/doctor/summary/\<str:id>\/`
@@ -161,7 +161,7 @@
     ```
   - CURL:
     ```bash
-    curl -X POST https://4414-143-89-191-4.ngrok-free.app/doctor/summary/0123/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/ \
     -F "audio=@/path/to/audio.wav" \
     -F "modified_paragraph=Updated summary text" \
     -F "modified_list=[\"Item1\", \"Item2\"]"
