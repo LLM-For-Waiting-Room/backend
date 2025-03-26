@@ -6,7 +6,7 @@
     ```json
     {
     "language": "en/zh",
-    "chatbot_type": "model_type",
+    "model": "chatbot_type",
     "age": "",
     "gender": "",
     ...
@@ -35,7 +35,6 @@
     {
     "session": "sessionID",
     "content": "用户提问内容",
-    "chatbot_type": "model_type"
     }
     ```
   - Return:
@@ -100,6 +99,28 @@
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/endChat/ \
     -H "Content-Type: application/json" \
     -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'
+    ```
++ 结束会话并生成患者代码
+  - URL: `/patient/transcription/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+    "audio": "音频文件"
+    }
+    ```
+  - Return:
+    ```json
+    {
+    "transcription": "识别出的文本内容"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST \
+    http://your-server-domain/patient/transcription/ \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'audio=@/path/to/your/audio.wav'
     ```
 + 通过记录ID查询患者代码 (***还未使用***)
   - URL: `/patient/searchPcode/`
