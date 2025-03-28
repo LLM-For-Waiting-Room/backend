@@ -7,9 +7,18 @@
     {
     "language": "en/zh",
     "model": "chatbot_type",
-    "age": "",
-    "gender": "",
-    ...
+    "user-agreement": true, 
+    "gender": "M", 
+    "age": "23", 
+    "if-allergies": true, 
+    "allergies": "花粉过敏", 
+    "if-medical-histories": false, 
+    "medical-histories": null, 
+    "if-family-histories": false, 
+    "family-histories": null, 
+    "symptom-keywords": ["發燒"], 
+    "symptom-text": "头痛", 
+    "duration": 3
     }
     ```
   - Return:
@@ -25,7 +34,20 @@
     ```bash
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/confirmForm/ \
     -H "Content-Type: application/json" \
-    -d '{"language": "en", "age": "23"}'
+    -d '{"language": "zh",
+    "model": "chatbot_type",
+    "user-agreement": true, 
+    "gender": "M", 
+    "age": "23", 
+    "if-allergies": true, 
+    "allergies": "花粉过敏", 
+    "if-medical-histories": false, 
+    "medical-histories": null, 
+    "if-family-histories": false, 
+    "family-histories": null, 
+    "symptom-keywords": ["發燒"], 
+    "symptom-text": "头痛", 
+    "duration": 3}'
     ```
 + 进行对话
   - URL: `/patient/chat/`
@@ -118,9 +140,9 @@
   - CURL:
     ```bash
     curl -X POST \
-    http://your-server-domain/patient/transcription/ \
+    https://smartlab.cse.ust.hk/smartcare/demo_api/patient/transcription/ \
     -H 'Content-Type: multipart/form-data' \
-    -F 'audio=@/path/to/your/audio.wav'
+    -F 'audio=@/Users/yuanqibo/Desktop/yue_dialogue.mp4'
     ```
 + 通过记录ID查询患者代码 (***还未使用***)
   - URL: `/patient/searchPcode/`
