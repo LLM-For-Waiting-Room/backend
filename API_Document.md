@@ -122,7 +122,7 @@
     -H "Content-Type: application/json" \
     -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'
     ```
-+ 结束会话并生成患者代码
++ 患者语音转文字
   - URL: `/patient/transcription/`
   - Method: `POST`
   - RequestBody: 
