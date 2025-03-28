@@ -47,7 +47,7 @@
     "family-histories": null, 
     "symptom-keywords": ["發燒"], 
     "symptom-text": "头痛", 
-    "duration": 3}'
+    "duration": 3}'| jq .
     ```
 + 进行对话
   - URL: `/patient/chat/`
@@ -71,7 +71,7 @@
     ```bash
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/chat/ \
     -H "Content-Type: application/json" \
-    -d '{"session": "SESSION_ID", "content": "Hello"}'
+    -d '{"session": "SESSION_ID", "content": "Hello"}'| jq .
     ```    
 + 获取会话历史
   - URL: `/patient/getConHistory/`
@@ -97,7 +97,7 @@
     ```bash
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/getConHistory/ \
     -H "Content-Type: application/json" \
-    -d '{"session": "SESSION_ID"}'
+    -d '{"session": "SESSION_ID"}'| jq .
     ```
 + 结束会话并生成患者代码
   - URL: `/patient/endChat/`
@@ -120,7 +120,7 @@
     ```bash
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/patient/endChat/ \
     -H "Content-Type: application/json" \
-    -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'
+    -d '{"session": "SESSION_ID", "modified_summary": "Confirmed summary text"}'| jq .
     ```
 + 患者语音转文字
   - URL: `/patient/transcription/`
@@ -142,7 +142,7 @@
     curl -X POST \
     https://smartlab.cse.ust.hk/smartcare/demo_api/patient/transcription/ \
     -H 'Content-Type: multipart/form-data' \
-    -F 'audio=@/Users/yuanqibo/Desktop/yue_dialogue.mp4'
+    -F 'audio=@/Users/yuanqibo/Desktop/yue_dialogue.mp4'| jq .
     ```
 + 通过记录ID查询患者代码 (***还未使用***)
   - URL: `/patient/searchPcode/`
@@ -207,5 +207,5 @@
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/ \
     -F "audio=@/path/to/audio.wav" \
     -F "modified_paragraph=Updated summary text" \
-    -F "modified_list=[\"Item1\", \"Item2\"]"
+    -F "modified_list=[\"Item1\", \"Item2\"]"| jq .
     ```
