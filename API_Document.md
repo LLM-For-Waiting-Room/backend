@@ -209,3 +209,29 @@
     -F "modified_paragraph=Updated summary text" \
     -F "modified_list=[\"Item1\", \"Item2\"]"| jq .
     ```
+
++ 生成相应的Document (eg: critical_questions/referral_letter/sick_leave/...)
+  - URL: `/doctor/generateDocument/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+    "medical_record": "medical_record",
+    "doc_type": "doc_type" // critical_questions/referral_letter/sick_leave/...
+    }
+    ```
+  - Return:
+    ```json
+    {
+    "document": "Generated document"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/generateDocument/ \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
+      "doc_type": "critical_questions"
+    }'| jq .
+    ```
