@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!--导入核心文件-->
+  {% load static %}
+  <script src="{% static 'plugins/jquery-1.9.1.min.js' %}"></script>
+  <title>聊天</title>
+  <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+  <style>
+    /* 模态框背景 */
+    .modal {
+        display: none; /* 默认隐藏 */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    /* 模态框内容 */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* 可根据需要调整 */
+    }
+
+    /* 关闭按钮 */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="content">
+      <div class="chat">
+        <div class="chat_my chat_mg">
+          <div class="my">
+            <div class="user">
+              <img src="{% static 'img/user.png' %}" alt="user" />
+              <span class="name">Patient</span>
+            </div>
+            <div class="chat_content">{{basicInfo}}</div>
+          </div>
+        </div>
+        <div class="chat_gpt chat_mg">
+          <div class="user">
+            <img src="{% static 'img/logo.png' %}" alt="user" />
+            <span class="name">AI</span>
+          </div>
+          <div class="chat_content">{{response}}</div>
+        </div>
+      </div>
+      <div class="input">
+        <input class="input_content" type="text" id="inputContent" />
+        <button class="upload_a"  onclick="uploadContent()">
+          <img class="upload_img" src="{% static 'img/launch.png' %}" alt="" />
+        </button>
+        <!--button class="upload_b"  onclick="uploadImage()">
+          <img class="upload_img" src="../static/img/upload.png" alt="" />
+        </button-->
+      </div>
+    </div>
+  </div>
+  <!-- 模态框结构 -->
+  <div id="myModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2 id="patientID"></h2>
+        <h2>Summary</h2>
+        <textarea id="summaryContent" rows="10" cols="50" style="width: 100%; height: 200px; resize: none;"></textarea>
+        <div>
+            <label><input type="checkbox" name="option1"> Need sick leave</label><br>
+            <label><input type="checkbox" name="option2"> Need a referral letter </label><br>
+            <button type="button" id="confirmButton">确定</button>
+        </div>
+    </div>
+  </div>
+  <script>
+    const leftList = document.querySelector('.main .left')
+    const close_a = document.querySelector('.main .close_a')
+    const inputContent = document.getElementById('inputContent')
+    const chatContainer = document.querySelector('.chat')
+
+
+    const uploadContent = () => {
+      // console.log('duihua ')
+      // 获取输入框内容
+      const content = inputContent.value
+      inputContent.value = "" // 清空输入框中内容
+      // Robot回复内容
+      let reply_content = ""
+      // 创建用户的头像和内容
+      const chatMy = document.createElement('div')
+      chatMy.classList.add('chat_my', 'chat_mg')
+      const userDiv = document.createElement('div')
+      userDiv.classList.add('user')
+      const userImg = document.createElement('img')
+      userImg.src = "/static/img/user.png"
+      userImg.alt = 'user'
+      const userName = document.createElement('span')
+      userName.classList.add('name')
+      userName.textContent = 'Patient'
+      const chatContent = document.createElement('div')
+      chatContent.classList.add('chat_content')
+      chatContent.textContent = content
+      userDiv.appendChild(userImg)
+      userDiv.appendChild(userName)
+      chatMy.appendChild(userDiv)
+      chatMy.appendChild(chatContent)
+      chatContainer.appendChild(chatMy)
+      
+      // 模拟 chat_gpt 的回复
+      const chatGpt = document.createElement('div')
+      chatGpt.classList.add('chat_gpt', 'chat_mg')
+      const chatGptUser = document.createElement('div')
+      chatGptUser.classList.add('user')
+      const chatGptImg = document.createElement('img')
+      chatGptImg.src = "{% static 'img/logo.png' %}"
+      chatGptImg.alt = 'user'
+      const chatGptName = document.createElement('span')
+      chatGptName.classList.add('name')
+      chatGptName.textContent = 'AI'
+      const chatGptContent = document.createElement('div')
+      chatGptContent.classList.add('chat_content')
+      chatGptContent.textContent = "正在等待响应，请稍候..."
+      chatGptUser.appendChild(chatGptImg)
+      chatGptUser.appendChild(chatGptName)
+      chatGpt.appendChild(chatGptUser)
+      chatGpt.appendChild(chatGptContent)
+      chatContainer.appendChild(chatGpt)
+
+      // 获取最新添加的消息元素并滚动到其位置
+      const latestMessage = chatContainer.lastElementChild
+      latestMessage.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      
+      $.ajax({
+        url: window.location.href,
+        type: "post",
+        traditional: true,
+        data: {
+            Question:content
+        },
+        dataType: "JSON",
+        success: function (res) {
+          if (res.status){
+            console.log(res)
+            //reply_content = "testsuccess"
+            reply_content = res.response
+            chatGptContent.textContent = reply_content
+
+            // 获取最新添加的消息元素并滚动到其位置
+            const latestMessage = chatContainer.lastElementChild
+            latestMessage.scrollIntoView({ behavior: 'smooth', block: 'end' })
+
+            console.log("对话成功")
+            if (res.reachedSummary === "True"){
+                // 显示模态框
+                document.getElementById('patientID').textContent = "Your ID:" + res.patient_id;
+                document.getElementById('summaryContent').value = reply_content || "No summary available.";
+                document.getElementById('myModal').style.display = "block";
+
+                // 为确定按钮绑定点击事件
+                document.getElementById('confirmButton').addEventListener('click', function() {
+                    // 获取复选框的状态
+                    let option1Checked = document.querySelector('input[name="option1"]').checked;
+                    let option2Checked = document.querySelector('input[name="option2"]').checked;
+                    let summary = document.getElementById('summaryContent').value
+                    // 执行确认后的逻辑
+                    confirmAction(summary, res.patient_id, option1Checked, option2Checked);
+
+                    // 关闭模态框
+                    document.getElementById('myModal').style.display = "none";
+                });
+
+                // 关闭模态框的事件监听器
+                document.getElementById('closeModal').addEventListener('click', function() {
+                    document.getElementById('myModal').style.display = "none";
+                });
+            }
+          }
+        }
+      })
+
+    }
+
+    function confirmAction(summary, patient_id, option1Checked, option2Checked){
+      console.log(summary)
+      $.ajax({
+        url: `/patient/${patient_id}/confirm/`,
+        type: "post",
+        traditional: true,
+        data: {
+            summary:summary,
+            sick_leave:option1Checked,
+            referral_letter:option2Checked
+        },
+        dataType: "JSON",
+        success: function (res) {
+          if (res.status){
+            location.href="/patient"
+          }
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .option {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option label {
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .option input:checked + label {
+            background-color: #007BFF;
+            color: #fff;
+            border-color: #0056b3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .option:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="options">
+        <div class="option">
+            <input type="checkbox" id="option1" name="option1" value="Option 1">
+            <label for="option1">Option 1</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" id="option2" name="option2" value="Option 2">
+            <label for="option2">Option 2</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" id="option3" name="option3" value="Option 3">
+            <label for="option3">Option 3</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" id="option4" name="option4" value="Option 4">
+            <label for="option4">Option 4</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" id="option5" name="option5" value="Option 5">
+            <label for="option5">Option 5</label>
+        </div>
+    </div>
+    <br>
+    <button id="getSelected">Get Selected Options</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        // 获取结果容器
+        const resultContainer = document.getElementById('result');
+        const getSelectedButton = document.getElementById('getSelected');
+
+        // 监听按钮点击事件
+        getSelectedButton.addEventListener('click', () => {
+            const selectedOptions = Array.from(document.querySelectorAll('.options input[type="checkbox"]:checked'))
+                .map(input => input.value);
+
+            if (selectedOptions.length > 0) {
+                resultContainer.textContent = `Selected Options: ${selectedOptions.join(', ')}`;
+            } else {
+                resultContainer.textContent = 'No options selected';
+            }
+        });
+    </script>
+</body>
+</html>

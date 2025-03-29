@@ -1,0 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: #0d0d0d;
+}
+ol,
+ul {
+  list-style: none;
+}
+.main {
+  display: flex;
+}
+.main .left {
+  position: fixed;
+  width: 250px;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 99;
+}
+.main .left .logo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.main .left .logo .logo_left {
+  display: flex;
+  align-items: center;
+}
+.main .left .logo .logo_left h1 {
+  font-size: 14px;
+  margin-left: 10px;
+}
+.main .left .logo .logo_left .logo_img {
+  width: 28px;
+  height: 28px;
+}
+.main .left .logo .edit_img {
+  width: 18px;
+  height: 18px;
+}
+.main .left .list h2 {
+  font-size: 14px;
+  color: #b4b4b4;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.main .left .list li {
+  height: 40px;
+  line-height: 40px;
+  /* background-color: #ececec; */
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.main .left .list li a {
+  display: block;
+  padding: 0 8px;
+  color: #0d0d0d;
+  font-size: 14px;
+}
+.main .left .list li:hover {
+  background-color: #ececec;
+}
+.main .left .list .active {
+  background-color: #ececec;
+}
+.main .left .user {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 99;
+}
+.main .left .user img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.main .close a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 50px;
+  position: fixed;
+  z-index: 99;
+  top: 50%;
+  left: 260px;
+}
+.main .close img {
+  width: 15px;
+  height: 35px;
+}

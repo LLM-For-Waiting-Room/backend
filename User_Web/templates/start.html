@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--导入核心文件-->
+<script src="../static/plugins/jquery-1.9.1.min.js"></script>
+<style>
+  #Start {
+    display: block;
+    margin: 0 auto; /* 水平居中 */
+    padding: 15px 30px; /* 增加内边距以放大按钮 */
+    font-size: 1.5em; /* 放大字体 */
+    width: fit-content; /* 确保宽度适应内容 */
+}
+</style>
+<body>
+    <button class="btn" id="Start" >Start</button><br>
+  </div>
+  <script>
+    $('#Start').click(function(){
+        $.ajax({
+          url: '/patient/set_id/',
+          type: "post",
+          dataType: "JSON",
+          success: function (res) {
+              if (res.status){
+                console.log(res.patient_id)
+                location.href = `/patient/${res.patient_id}/basicInfo`;
+              }
+              else{
+                console.log(res)
+              }
+          }
+
+        })
+    })
+  </script>
+</body>
+</html>
