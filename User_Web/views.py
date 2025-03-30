@@ -11,6 +11,7 @@ from django.contrib.sessions.models import Session
 from django.contrib.sessions.backends.db import SessionStore
 from asgiref.sync import sync_to_async
 import asyncio
+from django.http import JsonResponse, StreamingHttpResponse
 #ngrok http http://localhost:8000
 
 @csrf_exempt
@@ -23,7 +24,7 @@ def deleteSession(request):
 # 用户填写基础信息后提交，与模型进行交互
 @csrf_exempt
 def confirmForm(request):
-    
+
     # 先设置session
     if not request.session.session_key:
         request.session['conversation_history'] = []
@@ -310,28 +311,106 @@ def getRecordByCode(request, id):
         
         return HttpResponse(json.dumps({"sentences":sentences, "medical_record":medical_record}))
 
-
-# ConsultationUI
-def transcribe_audio(request):
-    requestBody = json.loads(request.body)
-    files = requestBody['files']
-
-    url = 'http://localhost:5000/consultation_transcribe'
-    response = requests.post(url, files=files, data="#").json()
-
-    sentences = response['sentences']
-    medical_record = response['medical_record']
-    suggested_plan = response['suggested_plan']
+@csrf_exempt
+def generatedReport(request,id):
+    """Handle report generation with support for both streaming and non-streaming modes."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
     
-    return HttpResponse(json.dumps({"sentences":sentences, "medical_record":medical_record, "suggested_plan":suggested_plan}))
+    patient_id = int(id)
+    t_map = models.TentativeMap.objects.filter(patient_id = patient_id).first()
+    
+    patient = t_map.record_id
 
 
-# 生成critical_question/referral_letter/sick_leave(待使用)
+    # Extract data from the request
+    try:
+        initial_summary = patient.patient_en_summary
+
+        # 处理请求
+        audio = request.FILES.get('audio')
+        modified_summary = request.POST.get('modified_paragraph')
+        items = json.loads(request.POST.get('modified_list'))
+        
+        patient.doctor_modified_summary = modified_summary
+        patient.basic_items = items
+        patient.save()
+
+        #text = request.POST.get("text")
+        stream = request.POST.get("stream", "false").lower() == "true"
+
+        # Transcribe the audio file
+        asr_url = "http://localhost:5001/transcribe"
+        asr_response = requests.post(asr_url, files={"audio": audio})
+        if asr_response.status_code == 200:
+            transcription = asr_response.json().get("transcription", "")
+        else:
+            transcription = asr_response.text
+
+        if not transcription:
+            print("empty transcription, using default value.")
+            transcription = "nothing else"
+
+    except Exception as e:
+        return JsonResponse({"error": f"Invalid request data: {str(e)}"}, status=400)
+
+    # Call the `generate_medical_record` API
+    url = "http://localhost:5004/generate_medical_record"
+    payload = {
+        "id": id,
+        "initial_summary": initial_summary,
+        "text": transcription,
+        "stream": stream
+    }
+    print("generate_medical_record payload:", payload)
+    if not all([id, initial_summary, transcription]):
+        return JsonResponse({"error": "Missing required fields (id, initial_summary, transcription)"}, status=400)
+
+    try:
+        if stream:
+            # Handle streaming mode
+            response = requests.post(url, json=payload, stream=True)
+            if response.status_code != 200:
+                return JsonResponse({"error": "Failed to generate medical record", "details": response.text}, status=response.status_code)
+
+            def stream_response():
+                try:
+                    for chunk in response.iter_content(chunk_size=None):
+                        if chunk:
+                            yield chunk
+                except requests.exceptions.RequestException as e:
+                    error_message = json.dumps({"error": str(e)}).encode()
+                    print("Streaming error:", error_message.decode('utf-8'))  # Log the error
+                    yield error_message
+                finally:
+                    print("Streaming complete.")  # Log when streaming is finished
+                    response.close()
+
+            response_server = StreamingHttpResponse(stream_response(), content_type="application/json")
+            response_server['Cache-Control'] = 'no-cache'  # Prevent client cache
+            response_server["X-Accel-Buffering"] = "no"  # Allow stream over NGINX server
+            return response_server
+        else:
+            # Handle non-streaming mode
+            response = requests.post(url, json=payload)
+            if response.status_code != 200:
+                return JsonResponse({"error": "Failed to generate medical record", "details": response.text}, status=response.status_code)
+            
+            return JsonResponse(response.json(), status=200)
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": f"Service communication error: {str(e)}"}, status=500)
+    except Exception as e:
+        return JsonResponse({"error": f"Unexpected error: {str(e)}"}, status=500)
+
+
+# 生成critical_questions/referral_letter/sick_leave(待使用)
 @csrf_exempt
 def generateDocument(request):
     requestBody = json.loads(request.body)
     medical_record = requestBody["medical_record"]
     doc_type = requestBody["doc_type"]
+    
     url = url = "http://localhost:19080/consultation_room_after_medical_record"
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -339,7 +418,7 @@ def generateDocument(request):
     "doc_type": doc_type
     }
 
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    response = requests.post(url, json=payload)
 
     if response.status_code == 200:
         document = response.json()["generated_document"]
@@ -347,3 +426,34 @@ def generateDocument(request):
         document = ""
     print(response.json())
     return HttpResponse(json.dumps({"document": document}))
+
+# Stream Document Generation (TEST)
+@csrf_exempt
+def generateStreamDoc(request):
+    print(request.body)
+    requestBody = json.loads(request.body)
+    medical_record = requestBody["medical_record"]
+    doc_type = requestBody["doc_type"].lower()
+    # stream = request["stream"]
+    
+    url = "http://localhost:19080/consultation_room_after_medical_record"
+    payload = {
+        "medical_record": medical_record,
+        "doc_type": doc_type,
+        "stream": True
+    }
+    response = requests.post(url, json=payload, stream=True)
+    def stream_response():
+        try:
+            for chunk in response.iter_content(chunk_size=None):
+                if chunk:
+                    print("Streaming chunk:", chunk.decode('utf-8'))  # Log the chunk being streamed
+                    yield chunk
+        except requests.exceptions.RequestException as e:
+            error_message = json.dumps({"error": str(e)}).encode()
+            print("Streaming error:", error_message.decode('utf-8'))  # Log the error
+            yield error_message
+        finally:
+            print("Streaming complete.")  # Log when streaming is finished
+            response.close()
+    return StreamingHttpResponse(stream_response(), content_type="application/octet-stream")

@@ -29,4 +29,5 @@ urlpatterns = [
     path('patient/searchPcode/', views.searchPatient_Code),
     path('doctor/summary/<str:id>/', views.getRecordByCode),
     path('doctor/generateDocument/', views.generateDocument),
+    path("doctor/generatedReport/<str:id>/", views.generatedReport),
 ]
