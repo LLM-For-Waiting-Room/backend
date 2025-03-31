@@ -328,28 +328,13 @@ def generatedReport(request,id):
         initial_summary = patient.patient_en_summary
 
         # 处理请求
-        audio = request.FILES.get('audio')
+        transcription = request.POST.get("transcription")
         modified_summary = request.POST.get('modified_paragraph')
         items = json.loads(request.POST.get('modified_list'))
         
         patient.doctor_modified_summary = modified_summary
         patient.basic_items = items
         patient.save()
-
-        #text = request.POST.get("text")
-        stream = request.POST.get("stream", "false").lower() == "true"
-
-        # Transcribe the audio file
-        asr_url = "http://localhost:5001/transcribe"
-        asr_response = requests.post(asr_url, files={"audio": audio})
-        if asr_response.status_code == 200:
-            transcription = asr_response.json().get("transcription", "")
-        else:
-            transcription = asr_response.text
-
-        if not transcription:
-            print("empty transcription, using default value.")
-            transcription = "nothing else"
 
     except Exception as e:
         return JsonResponse({"error": f"Invalid request data: {str(e)}"}, status=400)
@@ -360,44 +345,35 @@ def generatedReport(request,id):
         "id": id,
         "initial_summary": initial_summary,
         "text": transcription,
-        "stream": stream
+        "stream": True
     }
     print("generate_medical_record payload:", payload)
     if not all([id, initial_summary, transcription]):
         return JsonResponse({"error": "Missing required fields (id, initial_summary, transcription)"}, status=400)
 
     try:
-        if stream:
-            # Handle streaming mode
-            response = requests.post(url, json=payload, stream=True)
-            if response.status_code != 200:
-                return JsonResponse({"error": "Failed to generate medical record", "details": response.text}, status=response.status_code)
+        # Handle streaming mode
+        response = requests.post(url, json=payload, stream=True)
+        if response.status_code != 200:
+            return JsonResponse({"error": "Failed to generate medical record", "details": response.text}, status=response.status_code)
 
-            def stream_response():
-                try:
-                    for chunk in response.iter_content(chunk_size=None):
-                        if chunk:
-                            yield chunk
-                except requests.exceptions.RequestException as e:
-                    error_message = json.dumps({"error": str(e)}).encode()
-                    print("Streaming error:", error_message.decode('utf-8'))  # Log the error
-                    yield error_message
-                finally:
-                    print("Streaming complete.")  # Log when streaming is finished
-                    response.close()
+        def stream_response():
+            try:
+                for chunk in response.iter_content(chunk_size=None):
+                    if chunk:
+                        yield chunk
+            except requests.exceptions.RequestException as e:
+                error_message = json.dumps({"error": str(e)}).encode()
+                print("Streaming error:", error_message.decode('utf-8'))  # Log the error
+                yield error_message
+            finally:
+                print("Streaming complete.")  # Log when streaming is finished
+                response.close()
 
-            response_server = StreamingHttpResponse(stream_response(), content_type="application/json")
-            response_server['Cache-Control'] = 'no-cache'  # Prevent client cache
-            response_server["X-Accel-Buffering"] = "no"  # Allow stream over NGINX server
-            return response_server
-        else:
-            # Handle non-streaming mode
-            response = requests.post(url, json=payload)
-            if response.status_code != 200:
-                return JsonResponse({"error": "Failed to generate medical record", "details": response.text}, status=response.status_code)
-            
-            return JsonResponse(response.json(), status=200)
-
+        response_server = StreamingHttpResponse(stream_response(), content_type="application/json")
+        response_server['Cache-Control'] = 'no-cache'  # Prevent client cache
+        response_server["X-Accel-Buffering"] = "no"  # Allow stream over NGINX server
+        return response_server
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": f"Service communication error: {str(e)}"}, status=500)
     except Exception as e:
