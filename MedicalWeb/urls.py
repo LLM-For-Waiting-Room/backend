@@ -29,5 +29,6 @@ urlpatterns = [
     path('patient/searchPcode/', views.searchPatient_Code),
     path('doctor/summary/<str:id>/', views.getRecordByCode),
     path('doctor/generateDocument/', views.generateDocument),
+    path('doctor/generateDocumentStream_test/', views.generateStreamDoc),
     path("doctor/generatedReport/<str:id>/", views.generatedReport),
 ]

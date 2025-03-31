@@ -447,7 +447,7 @@ def generateStreamDoc(request):
         try:
             for chunk in response.iter_content(chunk_size=None):
                 if chunk:
-                    print("Streaming chunk:", chunk.decode('utf-8'))  # Log the chunk being streamed
+                    # print("Streaming chunk:", chunk.decode('utf-8'))  # Log the chunk being streamed
                     yield chunk
         except requests.exceptions.RequestException as e:
             error_message = json.dumps({"error": str(e)}).encode()
@@ -456,4 +456,7 @@ def generateStreamDoc(request):
         finally:
             print("Streaming complete.")  # Log when streaming is finished
             response.close()
-    return StreamingHttpResponse(stream_response(), content_type="application/octet-stream")
+    response_server = StreamingHttpResponse(stream_response(), content_type="application/octet-stream")
+    response_server['Cache-Control'] = 'no-cache'  # Prevent client cache
+    response_server["X-Accel-Buffering"] = "no"  # Allow stream over NGINX server
+    return response_server
