@@ -177,12 +177,13 @@
     "record_id": "记录ID",
     "conversation": "完整对话历史",
     "paragraph": "摘要文本",
-    "list": ["关键条目1", "关键条目2"]
+    "list": ["关键条目1", "关键条目2"],
+    "patient_items": {"user-agreement": true, "gender": "M", "age": "23",...}
     }
     ```
   - CURL:
     ```bash
-    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0180/
     ```
 + 提交病历修改，音频转录并流式生成Medical Report
   - URL: `/doctor/generatedReport/\<str:id>\/`
