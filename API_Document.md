@@ -184,13 +184,13 @@
     ```bash
     curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/
     ```
-+ 提交病历修改（含音频转录）
-  - URL: `/doctor/summary/\<str:id>\/`
++ 提交病历修改，音频转录并流式生成Medical Report
+  - URL: `/doctor/generatedReport/\<str:id>\/`
   - Method: `POST`
   - RequestBody: 
     ```json
     {
-    "audio": "音频文件",
+    "transcription": "音频转录文本",
     "modified_paragraph": "修改后的摘要",
     "modified_list": "修改后的关键条目",
     }
@@ -198,20 +198,19 @@
   - Return:
     ```json
     {
-    "sentences": "音频转录文本",
-    "medical_record": "对医患对话的总结"
+      流式输出
     }
     ```
   - CURL:
     ```bash
-    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0123/ \
-    -F "audio=@/path/to/audio.wav" \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/generatedReport/0123/ \
+    -F "transcription=音频转录文本" \
     -F "modified_paragraph=Updated summary text" \
     -F "modified_list=[\"Item1\", \"Item2\"]"| jq .
     ```
 
-+ 生成相应的Document (eg: critical_questions/referral_letter/sick_leave/...)
-  - URL: `/doctor/generateDocument/`
++ 流式生成相应的Document (eg: critical_questions/referral_letter/sick_leave/...)
+  - URL: `/doctor/generateDocumentStream_test/`
   - Method: `POST`
   - RequestBody: 
     ```json
@@ -223,12 +222,12 @@
   - Return:
     ```json
     {
-    "document": "Generated document"
+      流式输出
     }
     ```
   - CURL:
     ```bash
-    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/generateDocument/ \
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/generateDocumentStream_test/ \
     -H 'Content-Type: application/json' \
     -d '{
       "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
