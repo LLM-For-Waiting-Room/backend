@@ -184,7 +184,7 @@
     ```
   - CURL:
     ```bash
-    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0180/
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/summary/0184/
     ```
 + 提交病历修改，音频转录并流式生成Medical Report
   - URL: `/doctor/generatedReport/\<str:id>\/`
