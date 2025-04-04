@@ -178,7 +178,8 @@
     "conversation": "完整对话历史",
     "paragraph": "摘要文本",
     "list": ["关键条目1", "关键条目2"],
-    "patient_items": {"user-agreement": true, "gender": "M", "age": "23",...}
+    "patient_items": {"user-agreement": true, "gender": "M", "age": "23",...},
+    "urgency_level": "Critical/Urgent/Non-urgent"
     }
     ```
   - CURL:
