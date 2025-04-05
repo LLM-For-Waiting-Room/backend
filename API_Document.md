@@ -167,7 +167,7 @@
     -d '{"record_id": "RECORD_UUID"}'
     ```
 
-## DoctorUI
+# DoctorUI
 + 通过患者代码获取病历
   - URL: `/doctor/summary/\<str:id>\/`
   - Method: `GET`
@@ -235,4 +235,139 @@
       "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
       "doc_type": "critical_questions"
     }'| jq .
+    ```
+  
++ 医生登录
+  - URL: `/doctor/login/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "username": "123456",
+      "password": "123456"
+    }
+    ```
+  - Return:
+    ```json
+    {
+      "status": "success",
+      "doctor_id": "uuid-string"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/login/ \
+    -H "Content-Type: application/json" \
+    -d '{"username": "123456", "password": "123456"}'| jq .
+    ```
+
++ 创建医生账号
+  - URL: `/doctor/create/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "username": "String",
+      "password": "String"
+    }
+    ```
+  - Return:
+    ```json
+    {
+      "status": "success",
+      "doctor_id": "uuid-string"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/create/ \
+    -H "Content-Type: application/json" \
+    -d '{"username": "String", "password": "String"}'| jq .
+    ```
+
+# NurseUI
++ 获取所有等待中的患者(Stage: Waiting)
+  - URL: `/nurse/searchWaitingPatients/`
+  - Method: `GET`
+  - Return: 
+    ```json
+    {
+      "waiting_patients": [
+        {
+            "record_id": "uuid-string",
+            "initial_items": {},
+            "basic_items": {},
+            "patient_ch_summary": "string",
+            "patient_en_summary": "string",
+            "doctor_modified_summary": "string",
+            "conversation": [],
+            "urgency_level": "string",
+            "stage": "string",
+            "doctor_id": "uuid-string"
+        },
+        {
+            "record_id": "uuid-string",
+            "initial_items": {},
+            "basic_items": {},
+            "patient_ch_summary": "string",
+            "patient_en_summary": "string",
+            "doctor_modified_summary": "string",
+            "conversation": [],
+            "urgency_level": "string",
+            "stage": "string",
+            "doctor_id": "uuid-string"
+        },
+        ......
+    ]
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/nurse/searchWaitingPatients/| jq .
+    ```
++ 获取所有医生
+  - URL: `/nurse/getAllDoctors/`
+  - Method: `GET`
+  - Return: 
+    ```json
+    {
+      "doctors": [
+        {
+            "doctor_id": "uuid-string",
+            "username": "string"
+        },
+        {
+            "doctor_id": "uuid-string",
+            "username": "string"
+        }
+        ......
+      ]
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/nurse/getAllDoctors/| jq .
+    ```
++ 分配患者给医生
+  - URL: `/nurse/assignPatient_to_Doctor/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "record_id": "uuid-string",
+      "doctor_id": "uuid-string"
+    }
+    ```
+  - Return:
+    ```json
+    {
+      "status": "success",
+      "message": "Patient assigned to doctor successfully"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/nurse/assignPatient_to_Doctor/ \
+    -H "Content-Type: application/json" \
+    -d '{"record_id": "patient-uuid", "doctor_id": "doctor-uuid"}'| jq .
     ```
