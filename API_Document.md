@@ -295,6 +295,7 @@
       "waiting_patients": [
         {
             "record_id": "uuid-string",
+            "patient_code": "4 digit code",
             "initial_items": {},
             "basic_items": {},
             "patient_ch_summary": "string",
@@ -303,10 +304,12 @@
             "conversation": [],
             "urgency_level": "string",
             "stage": "string",
-            "doctor_id": "uuid-string"
+            "doctor_id": "uuid-string",
+            "create_time": "time"
         },
         {
             "record_id": "uuid-string",
+            "patient_code": "4 digit code",
             "initial_items": {},
             "basic_items": {},
             "patient_ch_summary": "string",
@@ -315,7 +318,8 @@
             "conversation": [],
             "urgency_level": "string",
             "stage": "string",
-            "doctor_id": "uuid-string"
+            "doctor_id": "uuid-string",
+            "create_time": "time"
         },
         ......
     ]
