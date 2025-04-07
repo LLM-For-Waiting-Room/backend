@@ -236,7 +236,7 @@
       "doc_type": "critical_questions"
     }'| jq .
     ```
-+ 流式更行相应的Record和Document (eg: critical_questions/referral_letter/sick_leave/...)
++ 流式更新相应的Record和Document (eg: critical_questions/referral_letter/sick_leave/...)
   - URL: `/doctor/updateDocument/`
   - Method: `POST`
   - RequestBody: 
@@ -265,8 +265,22 @@
                 "Peak flow reduced to 250 from usual 400",
                 "Reports using rescue inhaler 3x daily"
             ],
-      "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
+      "medical_record": "History:\n- Asthma since 2015\n- Allergic rhinitis",
       "document":""
+    }'| jq .
+    ```
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/updateDocument/ \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "doc_type": "referral_letter",
+      "transcription": [
+                "New chest pain on exertion",
+                "Abnormal stress echocardiogram",
+                "BNP elevated to 500 pg/mL"
+            ],
+      "document": "Referral for cardiac assessment",
+      "medical_record": "PMH: Hypertension\nMedications: Lisinopril 10mg OD"
     }'| jq .
     ```
 
