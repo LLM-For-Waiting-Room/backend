@@ -236,7 +236,40 @@
       "doc_type": "critical_questions"
     }'| jq .
     ```
-  
++ 流式更行相应的Record和Document (eg: critical_questions/referral_letter/sick_leave/...)
+  - URL: `/doctor/updateDocument/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "doc_type": "string",     // 文档类型：'medical_record' 或其他
+      "transcription": ["string", "string", "......"], 
+      "document": "string",      // 当前文档内容, 若doc_type是'medical_record'，传空字符串即可
+      "medical_record": "string" // 医疗记录内容
+    }
+    ```
+  - Return:
+    ```json
+    {
+      流式输出
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/updateDocument/ \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "doc_type": "medical_record",
+      "transcription": [
+                "New wheezing episodes at night",
+                "Peak flow reduced to 250 from usual 400",
+                "Reports using rescue inhaler 3x daily"
+            ],
+      "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
+      "document":""
+    }'| jq .
+    ```
+
 + 医生登录
   - URL: `/doctor/login/`
   - Method: `POST`
@@ -305,6 +338,7 @@
             "urgency_level": "string",
             "stage": "string",
             "doctor_id": "uuid-string",
+            "chief_complaint": "string",
             "create_time": "time"
         },
         {
@@ -319,6 +353,7 @@
             "urgency_level": "string",
             "stage": "string",
             "doctor_id": "uuid-string",
+            "chief_complaint": "string",
             "create_time": "time"
         },
         ......
