@@ -473,3 +473,39 @@
     -H "Content-Type: application/json" \
     -d '{"record_id": "patient-uuid", "doctor_id": "doctor-uuid"}'| jq .
     ```
+ 
+# Admin
++ 获取所有医生
+  - URL: `/Admin/get_all_nurses_and_doctors`
+  - Method: `GET`
+  - Return: 
+    ```json
+    {
+      "doctors": [
+        {
+            "doctor_id": "uuid-string",
+            "username": "string"
+        },
+        {
+            "doctor_id": "uuid-string",
+            "username": "string"
+        }
+        ......
+      ],
+      "nurses": [
+        {
+            "nurse_id": "uuid-string",
+            "username": "string"
+        },
+        {
+            "nurse_id": "uuid-string",
+            "username": "string"
+        }
+        ......
+      ],
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X GET https://smartlab.cse.ust.hk/smartcare/demo_api/Admin/get_all_nurses_and_doctors/| jq .
+    ```
