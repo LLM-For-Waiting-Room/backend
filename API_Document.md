@@ -233,7 +233,7 @@
     -H 'Content-Type: application/json' \
     -d '{
       "medical_record": "History:- Presenting complaint: 4-week history of intermittent chest pain, worse...",
-      "doc_type": "critical_questions"
+      "doc_type": "labs_forms"
     }'| jq .
     ```
 + 流式更新相应的Record和Document (eg: critical_questions/referral_letter/sick_leave/...)
@@ -273,7 +273,7 @@
     curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/doctor/updateDocument/ \
     -H 'Content-Type: application/json' \
     -d '{
-      "doc_type": "referral_letter",
+      "doc_type": "medical_record",
       "transcription": [
                 "New chest pain on exertion",
                 "Abnormal stress echocardiogram",
@@ -333,6 +333,55 @@
     ```
 
 # NurseUI
++ 护士登录
+  - URL: `/nurse/login/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "username": "nurse1",
+      "password": "123456"
+    }
+    ```
+  - Return:
+    ```json
+    {
+      "status": "success",
+      "nurse_id": "uuid-string"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/nurse/login/ \
+    -H "Content-Type: application/json" \
+    -d '{"username": "nurse1", "password": "123456"}'| jq .
+    ```
+
++ 创建护士账号
+  - URL: `/nurse/create/`
+  - Method: `POST`
+  - RequestBody: 
+    ```json
+    {
+      "username": "String",
+      "password": "String"
+    }
+    ```
+  - Return:
+    ```json
+    {
+      "status": "success",
+      "nurse_id": "uuid-string"
+    }
+    ```
+  - CURL:
+    ```bash
+    curl -X POST https://smartlab.cse.ust.hk/smartcare/demo_api/nurse/create/ \
+    -H "Content-Type: application/json" \
+    -d '{"username": "String", "password": "String"}'| jq .
+    ```
+
+
 + 获取所有等待中的患者(Stage: Waiting)
   - URL: `/nurse/searchWaitingPatients/`
   - Method: `GET`
